@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { FaSearch, FaBars, FaTimes } from "react-icons/fa";
+import { motion } from "framer-motion";
 
 const Navbar = () => {
   const [categories, setCategories] = useState([]);
@@ -19,9 +20,22 @@ const Navbar = () => {
   return (
     <nav className="bg-white shadow-md p-4 sticky top-0 z-50 flex justify-between items-center">
       {/* Logo */}
-      <Link to="/" className="text-2xl font-bold text-gray-900">
-        My Website
-      </Link>
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <Link to="/" className="text-2xl font-bold text-gray-900 dark:text-white">
+          Scenario{" "}
+          <motion.span
+            className="text-blue-500 dark:text-blue-400"
+            whileHover={{ scale: 1.1 }}
+            transition={{ duration: 0.3 }}
+          >
+            Papers
+          </motion.span>
+        </Link>
+      </motion.div>
 
       {/* Desktop Navigation */}
       <div className="hidden md:flex space-x-6 items-center">
@@ -42,6 +56,7 @@ const Navbar = () => {
                       className="block w-full text-left px-4 py-2 hover:bg-blue-500 hover:text-white"
                     >
                       {sub.name}
+                      
                     </button>
                     {openSubCategory === sub._id && sub.subSubcategories?.length > 0 && (
                       <ul className="absolute left-full top-0 w-40 bg-white shadow-md rounded-md">
