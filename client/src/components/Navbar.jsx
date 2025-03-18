@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { FaSearch, FaBars, FaTimes } from "react-icons/fa";
 
 const Navbar = () => {
   const [categories, setCategories] = useState([]);
-  const [openDropdown, setOpenDropdown] = useState(null);
-  const [openSubDropdown, setOpenSubDropdown] = useState(null);
+  const [openCategory, setOpenCategory] = useState(null);
+  const [openSubCategory, setOpenSubCategory] = useState(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     axios
@@ -15,36 +17,41 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav className="navbar flex  items-center px-6 py-3 bg-white shadow-md rounded-lg">
-      <Link to="/" className="text-2xl font-bold text-gray-900">My Website</Link>
-      <div className="hidden md:flex space-x-6 relative">
+    <nav className="bg-white shadow-md p-4 sticky top-0 z-50 flex justify-between items-center">
+      {/* Logo */}
+      <Link to="/" className="text-2xl font-bold text-gray-900">
+        My Website
+      </Link>
+
+      {/* Desktop Navigation */}
+      <div className="hidden md:flex space-x-6 items-center">
         {categories.map((category) => (
-          <div key={category._id} className="relative group">
+          <div key={category._id} className="relative">
             <button
-              onClick={() => setOpenDropdown(openDropdown === category._id ? null : category._id)}
-              className="text-lg font-medium text-gray-700 hover:text-primary transition"
+              onClick={() => setOpenCategory(openCategory === category._id ? null : category._id)}
+              className="text-lg font-medium text-gray-700 hover:text-blue-500"
             >
               {category.name}
             </button>
-            {openDropdown === category._id && category.subcategories?.length > 0 && (
-              <ul className="absolute left-0 mt-2 w-56 bg-white shadow-lg rounded-lg opacity-100 scale-100 transition-all duration-200">
-                {category.subcategories.map((subcategory) => (
-                  <li key={subcategory._id} className="relative">
+            {openCategory === category._id && category.subcategories?.length > 0 && (
+              <ul className="absolute left-0 mt-2 w-40 bg-white shadow-md rounded-md">
+                {category.subcategories.map((sub) => (
+                  <li key={sub._id} className="relative">
                     <button
-                      onClick={() => setOpenSubDropdown(openSubDropdown === subcategory._id ? null : subcategory._id)}
-                      className="block px-4 py-2 hover:bg-primary hover:text-white w-full text-left transition"
+                      onClick={() => setOpenSubCategory(openSubCategory === sub._id ? null : sub._id)}
+                      className="block w-full text-left px-4 py-2 hover:bg-blue-500 hover:text-white"
                     >
-                      {subcategory.name}
+                      {sub.name}
                     </button>
-                    {openSubDropdown === subcategory._id && subcategory.subSubcategories?.length > 0 && (
-                      <ul className="absolute left-full top-0 w-56 bg-white shadow-lg rounded-lg opacity-100 scale-100 transition-all duration-200">
-                        {subcategory.subSubcategories.map((subSubcategory) => (
-                          <li key={subSubcategory._id}>
+                    {openSubCategory === sub._id && sub.subSubcategories?.length > 0 && (
+                      <ul className="absolute left-full top-0 w-40 bg-white shadow-md rounded-md">
+                        {sub.subSubcategories.map((subSub) => (
+                          <li key={subSub._id}>
                             <Link
-                              to={`/subsubcategory/${subSubcategory._id}`}
-                              className="block px-4 py-2 hover:bg-primary hover:text-white transition"
+                              to={`/subsubcategory/${subSub._id}`}
+                              className="block px-4 py-2 hover:bg-blue-500 hover:text-white"
                             >
-                              {subSubcategory.name}
+                              {subSub.name}
                             </Link>
                           </li>
                         ))}
@@ -56,7 +63,48 @@ const Navbar = () => {
             )}
           </div>
         ))}
+        <Link to="/my-news" className="text-lg font-medium text-gray-700 hover:text-blue-500">
+          My News
+        </Link>
+        <button className="text-gray-700 hover:text-blue-500">
+          <FaSearch size={20} />
+        </button>
+        <Link to="/get-started" className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+          Get Started
+        </Link>
       </div>
+
+      {/* Mobile Menu Button */}
+      <button
+        className="md:hidden text-gray-700"
+        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+      >
+        {mobileMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
+      </button>
+
+      {/* Mobile Navigation */}
+      {mobileMenuOpen && (
+        <div className="absolute top-16 left-0 w-full bg-white shadow-md flex flex-col space-y-4 p-4 md:hidden">
+          {categories.map((category) => (
+            <button
+              key={category._id}
+              onClick={() => setOpenCategory(openCategory === category._id ? null : category._id)}
+              className="text-lg font-medium text-gray-700 hover:text-blue-500"
+            >
+              {category.name}
+            </button>
+          ))}
+          <Link to="/my-news" className="text-lg font-medium text-gray-700 hover:text-blue-500">
+            My News
+          </Link>
+          <button className="text-gray-700 hover:text-blue-500">
+            <FaSearch size={20} />
+          </button>
+          <Link to="/get-started" className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+            Get Started
+          </Link>
+        </div>
+      )}
     </nav>
   );
 };
