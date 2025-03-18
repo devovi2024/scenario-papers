@@ -13,7 +13,10 @@ exports.createCategory = async (req, res) => {
 
 exports.getCategories = async (req, res) => {
   try {
-    const categories = await Category.find().populate("subcategories");
+    const categories = await Category.find().populate({
+      path: "subcategories",
+      populate: { path: "subSubcategories" }, // ✅ সাব-সাবক্যাটাগরি অন্তর্ভুক্ত
+    });
     res.json(categories);
   } catch (error) {
     res.status(500).json({ error: error.message });
